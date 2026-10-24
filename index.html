@@ -66,7 +66,7 @@
     .btn-row {
       display: flex;
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 16px;
       flex-wrap: wrap;
     }
     button {
@@ -114,13 +114,8 @@
       color: var(--muted);
       margin-bottom: 10px;
     }
-    .export-btns {
-      margin-top: 0;
-    }
-    .btn-coming {
-      opacity: 0.55;
-      position: relative;
-    }
+    .export-btns { margin-top: 0; }
+    .btn-coming { opacity: 0.55; position: relative; }
     .btn-coming::after {
       content: "Soon";
       position: absolute;
@@ -174,17 +169,13 @@
     }
     .status.error { color: #dc2626; }
     .status.success { color: #16a34a; }
-
     .saved-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
     }
-    .saved-header h2 {
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
+    .saved-header h2 { font-size: 1.05rem; font-weight: 700; }
     .saved-count {
       font-size: 0.8rem;
       color: var(--muted);
@@ -219,10 +210,7 @@
       background: #eff6ff;
       box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
     }
-    .saved-item-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .saved-item-info { flex: 1; min-width: 0; }
     .saved-item-title {
       font-weight: 600;
       font-size: 0.95rem;
@@ -740,27 +728,27 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
   <script>
     (function () {
-      const STORAGE_KEY = "qr-a4-saved-v1";
+      var STORAGE_KEY = "qr-a4-saved-v1";
 
-      const qrTextEl = document.getElementById("qrText");
-      const titleEl = document.getElementById("title");
-      const subtitleEl = document.getElementById("subtitle");
-      const generateBtn = document.getElementById("generateBtn");
-      const saveBtn = document.getElementById("saveBtn");
-      const printBtn = document.getElementById("printBtn");
-      const downloadBtn = document.getElementById("downloadBtn");
-      const statusEl = document.getElementById("status");
-      const previewSection = document.getElementById("previewSection");
-      const previewTitle = document.getElementById("previewTitle");
-      const previewSubtitle = document.getElementById("previewSubtitle");
-      const previewTimestamp = document.getElementById("previewTimestamp");
-      const qrcodeEl = document.getElementById("qrcode");
-      const savedListEl = document.getElementById("savedList");
-      const savedCountEl = document.getElementById("savedCount");
+      var qrTextEl = document.getElementById("qrText");
+      var titleEl = document.getElementById("title");
+      var subtitleEl = document.getElementById("subtitle");
+      var generateBtn = document.getElementById("generateBtn");
+      var saveBtn = document.getElementById("saveBtn");
+      var printBtn = document.getElementById("printBtn");
+      var downloadBtn = document.getElementById("downloadBtn");
+      var statusEl = document.getElementById("status");
+      var previewSection = document.getElementById("previewSection");
+      var previewTitle = document.getElementById("previewTitle");
+      var previewSubtitle = document.getElementById("previewSubtitle");
+      var previewTimestamp = document.getElementById("previewTimestamp");
+      var qrcodeEl = document.getElementById("qrcode");
+      var savedListEl = document.getElementById("savedList");
+      var savedCountEl = document.getElementById("savedCount");
 
-      let qrInstance = null;
-      let lastTimestamp = "";
-      let currentLoadedId = null;
+      var qrInstance = null;
+      var lastTimestamp = "";
+      var currentLoadedId = null;
 
       function setStatus(msg, type) {
         statusEl.textContent = msg || "";
@@ -779,7 +767,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
       function loadSaved() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
+          var raw = localStorage.getItem(STORAGE_KEY);
           return raw ? JSON.parse(raw) : [];
         } catch (e) {
           return [];
@@ -799,7 +787,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       }
 
       function renderSavedList() {
-        const list = loadSaved();
+        var list = loadSaved();
         savedCountEl.textContent = list.length;
 
         if (list.length === 0) {
@@ -807,30 +795,33 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           return;
         }
 
-        const sorted = list.slice().sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+        var sorted = list.slice().sort(function (a, b) {
+          return new Date(b.savedAt) - new Date(a.savedAt);
+        });
 
-        savedListEl.innerHTML = sorted.map(item => {
-          const displayTitle = item.title || item.text.slice(0, 40) || "Untitled";
-          const metaParts = [];
+        var html = "";
+        for (var i = 0; i < sorted.length; i++) {
+          var item = sorted[i];
+          var displayTitle = item.title || item.text.slice(0, 40) || "Untitled";
+          var metaParts = [];
           if (item.subtitle) metaParts.push(item.subtitle);
           metaParts.push(formatTimestamp(new Date(item.savedAt)));
-          const meta = metaParts.join(" · ");
-          const isActive = currentLoadedId === item.id ? " active" : "";
+          var meta = metaParts.join(" · ");
+          var isActive = currentLoadedId === item.id ? " active" : "";
 
-          return `
-            <li class="saved-item${isActive}" data-id="${item.id}" tabindex="0" role="button">
-              <div class="saved-item-info">
-                <div class="saved-item-title">${escapeHtml(displayTitle)}</div>
-                <div class="saved-item-meta">${escapeHtml(meta)}</div>
-              </div>
-              <button type="button" class="btn-danger" data-delete="${item.id}" title="Delete">Delete</button>
-            </li>
-          `;
-        }).join("");
+          html += '<li class="saved-item' + isActive + '" data-id="' + item.id + '" tabindex="0" role="button">';
+          html += '<div class="saved-item-info">';
+          html += '<div class="saved-item-title">' + escapeHtml(displayTitle) + '</div>';
+          html += '<div class="saved-item-meta">' + escapeHtml(meta) + '</div>';
+          html += '</div>';
+          html += '<button type="button" class="btn-danger" data-delete="' + item.id + '" title="Delete">Delete</button>';
+          html += '</li>';
+        }
+        savedListEl.innerHTML = html;
       }
 
       function generateQR(fromLoad) {
-        const text = qrTextEl.value.trim();
+        var text = qrTextEl.value.trim();
         if (!text) {
           setStatus("Please enter some text or a URL.", "error");
           saveBtn.disabled = true;
@@ -882,25 +873,25 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       }
 
       function saveCurrent() {
-        const text = qrTextEl.value.trim();
+        var text = qrTextEl.value.trim();
         if (!text || !qrInstance) {
           setStatus("Generate a QR code first.", "error");
           return;
         }
 
-        const list = loadSaved();
-        const now = new Date().toISOString();
+        var list = loadSaved();
+        var now = new Date().toISOString();
 
         if (currentLoadedId) {
-          const idx = list.findIndex(i => i.id === currentLoadedId);
+          var idx = -1;
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].id === currentLoadedId) { idx = i; break; }
+          }
           if (idx !== -1) {
-            list[idx] = {
-              ...list[idx],
-              text: text,
-              title: titleEl.value.trim(),
-              subtitle: subtitleEl.value.trim(),
-              savedAt: now
-            };
+            list[idx].text = text;
+            list[idx].title = titleEl.value.trim();
+            list[idx].subtitle = subtitleEl.value.trim();
+            list[idx].savedAt = now;
             persistSaved(list);
             renderSavedList();
             setStatus("Saved code updated.", "success");
@@ -908,7 +899,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           }
         }
 
-        const item = {
+        var item = {
           id: "qr_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
           text: text,
           title: titleEl.value.trim(),
@@ -924,8 +915,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       }
 
       function loadItem(id) {
-        const list = loadSaved();
-        const item = list.find(i => i.id === id);
+        var list = loadSaved();
+        var item = null;
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) { item = list[i]; break; }
+        }
         if (!item) return;
 
         qrTextEl.value = item.text || "";
@@ -940,9 +934,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       }
 
       function deleteItem(id) {
-        let list = loadSaved();
-        list = list.filter(i => i.id !== id);
-        persistSaved(list);
+        var list = loadSaved();
+        var newList = [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id !== id) newList.push(list[i]);
+        }
+        persistSaved(newList);
 
         if (currentLoadedId === id) {
           currentLoadedId = null;
@@ -957,95 +954,73 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
           return;
         }
 
-        const canvas = qrcodeEl.querySelector("canvas");
+        var canvas = qrcodeEl.querySelector("canvas");
         if (!canvas) {
           setStatus("QR canvas not ready. Try generating again.", "error");
           return;
         }
 
-        const imgData = canvas.toDataURL("image/png");
-        const title = titleEl.value.trim() || "QR Code";
-        const subtitle = subtitleEl.value.trim();
-        const timestamp = lastTimestamp || formatTimestamp(new Date());
+        var imgData = canvas.toDataURL("image/png");
+        var title = titleEl.value.trim() || "QR Code";
+        var subtitle = subtitleEl.value.trim();
+        var timestamp = lastTimestamp || formatTimestamp(new Date());
 
-        const printWindow = window.open("", "_blank");
+        var printWindow = window.open("", "_blank");
         if (!printWindow) {
           setStatus("Popup blocked. Please allow popups for this page.", "error");
           return;
         }
 
-        printWindow.document.write(`
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>${title.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</title>
-  <style>
-    @page {
-      size: A4;
-      margin: 20mm;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #141414;
-      text-align: center;
-      padding: 10mm 0;
-    }
-    h1 {
-      font-size: 22pt;
-      font-weight: 700;
-      margin-bottom: 6mm;
-      line-height: 1.25;
-    }
-    .subtitle {
-      font-size: 13pt;
-      color: #505050;
-      margin-bottom: 12mm;
-      line-height: 1.3;
-    }
-    .qr {
-      margin: 0 auto 14mm;
-      width: 90mm;
-      height: 90mm;
-    }
-    .qr img {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    .timestamp {
-      font-size: 10pt;
-      color: #787878;
-      margin-top: 8mm;
-      border-top: 0.3pt solid #c8c8c8;
-      padding-top: 5mm;
-      display: inline-block;
-      min-width: 60%;
-    }
-    @media print {
-      body { padding: 0; }
-    }
-  </style>
-</head>
-<body>
-  <h1>${title.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</h1>
-  ${subtitle ? `<div class="subtitle">${subtitle.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>` : ""}
-  <div class="qr"><img src="${imgData}" alt="QR Code"></div>
-  <div class="timestamp">Generated: ${timestamp}</div>
-  <script>
-    window.onload = function() {
-      setTimeout(function() {
-        window.print();
-        // Optional: close after print dialog (some browsers)
-        // window.close();
-      }, 250);
-    };
-  </script>
-</body>
-</html>
-        `);
+        function esc(str) {
+          return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        var safeTitle = esc(title);
+        var safeSubtitle = esc(subtitle);
+
+        var html = [
+          "<!DOCTYPE html>",
+          "<html>",
+          "<head>",
+          "  <meta charset=\"UTF-8\">",
+          "  <title>" + safeTitle + "</title>",
+          "  <style>",
+          "    @page { size: A4; margin: 20mm; }",
+          "    * { box-sizing: border-box; margin: 0; padding: 0; }",
+          "    body { font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; color: #141414; text-align: center; padding: 10mm 0; }",
+          "    h1 { font-size: 22pt; font-weight: 700; margin-bottom: 6mm; line-height: 1.25; }",
+          "    .subtitle { font-size: 13pt; color: #505050; margin-bottom: 12mm; line-height: 1.3; }",
+          "    .qr { margin: 0 auto 14mm; width: 90mm; height: 90mm; }",
+          "    .qr img { width: 100%; height: 100%; display: block; }",
+          "    .timestamp { font-size: 10pt; color: #787878; margin-top: 8mm; border-top: 0.3pt solid #c8c8c8; padding-top: 5mm; display: inline-block; min-width: 60%; }",
+          "    @media print { body { padding: 0; } }",
+          "  </style>",
+          "</head>",
+          "<" + "body>",
+          "  <h1>" + safeTitle + "</h1>",
+          subtitle ? "  <div class=\"subtitle\">" + safeSubtitle + "</div>" : "",
+          "  <div class=\"qr\"><img src=\"" + imgData + "\" alt=\"QR Code\"></div>",
+          "  <div class=\"timestamp\">Generated: " + timestamp + "</div>",
+          "</" + "body>",
+          "</html>"
+        ].join("\n");
+
+        printWindow.document.write(html);
         printWindow.document.close();
+
+        setTimeout(function () {
+          try {
+            printWindow.focus();
+            printWindow.print();
+          } catch (e) {
+            console.error(e);
+          }
+        }, 300);
+
         setStatus("Print dialog opened.", "success");
       }
 
@@ -1062,45 +1037,45 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
         setTimeout(function () {
           try {
-            const canvas = qrcodeEl.querySelector("canvas");
+            var canvas = qrcodeEl.querySelector("canvas");
             if (!canvas) {
               setStatus("QR canvas not ready. Try generating again.", "error");
               return;
             }
 
-            const imgData = canvas.toDataURL("image/png");
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
+            var imgData = canvas.toDataURL("image/png");
+            var jsPDF = window.jspdf.jsPDF;
+            var doc = new jsPDF({
               orientation: "portrait",
               unit: "mm",
               format: "a4"
             });
 
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const margin = 20;
+            var pageWidth = 210;
+            var pageHeight = 297;
+            var margin = 20;
 
-            const title = titleEl.value.trim() || "QR Code";
+            var title = titleEl.value.trim() || "QR Code";
             doc.setFont("helvetica", "bold");
             doc.setFontSize(22);
             doc.setTextColor(20, 20, 20);
-            const titleLines = doc.splitTextToSize(title, pageWidth - margin * 2);
+            var titleLines = doc.splitTextToSize(title, pageWidth - margin * 2);
             doc.text(titleLines, pageWidth / 2, 35, { align: "center" });
 
-            const subtitle = subtitleEl.value.trim();
-            let yAfterTitle = 35 + titleLines.length * 9;
+            var subtitle = subtitleEl.value.trim();
+            var yAfterTitle = 35 + titleLines.length * 9;
             if (subtitle) {
               doc.setFont("helvetica", "normal");
               doc.setFontSize(14);
               doc.setTextColor(80, 80, 80);
-              const subLines = doc.splitTextToSize(subtitle, pageWidth - margin * 2);
+              var subLines = doc.splitTextToSize(subtitle, pageWidth - margin * 2);
               doc.text(subLines, pageWidth / 2, yAfterTitle + 6, { align: "center" });
               yAfterTitle += 6 + subLines.length * 7;
             }
 
-            const qrSize = 90;
-            const qrX = (pageWidth - qrSize) / 2;
-            const qrY = Math.max(yAfterTitle + 15, 70);
+            var qrSize = 90;
+            var qrX = (pageWidth - qrSize) / 2;
+            var qrY = Math.max(yAfterTitle + 15, 70);
             doc.addImage(imgData, "PNG", qrX, qrY, qrSize, qrSize);
 
             doc.setFont("helvetica", "normal");
@@ -1114,7 +1089,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
             doc.setLineWidth(0.3);
             doc.line(margin, pageHeight - 25, pageWidth - margin, pageHeight - 25);
 
-            const safeName = (title || "qr-code")
+            var safeName = (title || "qr-code")
               .replace(/[^a-z0-9\-_\s]/gi, "")
               .trim()
               .replace(/\s+/g, "-")
@@ -1152,17 +1127,17 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       });
 
       savedListEl.addEventListener("click", function (e) {
-        const deleteBtn = e.target.closest("[data-delete]");
+        var deleteBtn = e.target.closest("[data-delete]");
         if (deleteBtn) {
           e.stopPropagation();
-          const id = deleteBtn.getAttribute("data-delete");
+          var id = deleteBtn.getAttribute("data-delete");
           if (confirm("Delete this saved QR code?")) {
             deleteItem(id);
           }
           return;
         }
 
-        const item = e.target.closest(".saved-item");
+        var item = e.target.closest(".saved-item");
         if (item && item.dataset.id) {
           loadItem(item.dataset.id);
         }
@@ -1170,7 +1145,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 
       savedListEl.addEventListener("keydown", function (e) {
         if (e.key === "Enter" || e.key === " ") {
-          const item = e.target.closest(".saved-item");
+          var item = e.target.closest(".saved-item");
           if (item && item.dataset.id) {
             e.preventDefault();
             loadItem(item.dataset.id);
@@ -1183,4 +1158,3 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   </script>
 </body>
 </html>
-
